@@ -129,3 +129,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 AUTH_USER_MODEL = 'api.User'
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'host_address'
+EMAIL_HOST_USER = 'email'
+EMAIL_HOST_PASSWORD = 'password'
+EMAIL_PORT = 587
