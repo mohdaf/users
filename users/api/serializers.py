@@ -52,3 +52,8 @@ class LoginSerializer(serializers.Serializer):
             raise serializers.ValidationError('Email is not verified', code='authorization')
         attrs['user'] = user
         return attrs
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    """Serializer for password change."""
+    password = serializers.CharField(required=True)
