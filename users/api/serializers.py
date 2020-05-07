@@ -4,6 +4,7 @@ from rest_framework import serializers
 from .tokens import account_activation_token
 from django.core.mail import EmailMessage
 
+
 class RegisterUserSerializer(serializers.ModelSerializer):
     """Creating new users"""
     class Meta:
@@ -24,9 +25,11 @@ class RegisterUserSerializer(serializers.ModelSerializer):
         email.send()
         return created_user
 
+
 class VerifyTokenSerializer(serializers.Serializer):
     """Serializer for the user authentication object"""
     token = serializers.CharField(required=True)
+
 
 class LoginSerializer(serializers.Serializer):
     """Serializer for the user authentication object"""
@@ -57,3 +60,17 @@ class LoginSerializer(serializers.Serializer):
 class ChangePasswordSerializer(serializers.Serializer):
     """Serializer for password change."""
     password = serializers.CharField(required=True)
+
+
+class AuthUserSerializer(serializers.ModelSerializer):
+    """views users internally"""
+    class Meta:
+        model = get_user_model()
+        fields = ('email', 'first_name', 'last_name')
+
+
+class PublicUserSerializer(serializers.ModelSerializer):
+    """views users externally"""
+    class Meta:
+        model = get_user_model()
+        fields = ('first_name',)

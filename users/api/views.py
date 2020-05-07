@@ -3,14 +3,18 @@ from rest_framework import generics
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.views import APIView
 from rest_framework.settings import api_settings
-from .serializers import RegisterUserSerializer, LoginSerializer, VerifyTokenSerializer, ChangePasswordSerializer
+from .serializers import RegisterUserSerializer, LoginSerializer, VerifyTokenSerializer,\
+     ChangePasswordSerializer, AuthUserSerializer, PublicUserSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import viewsets
+
 
 class RegisterUserView(generics.CreateAPIView):
     """Create a new user in the system"""
     serializer_class = RegisterUserSerializer
+
 
 class VerifyEmailView(APIView):
     """Verify a user email"""
@@ -31,6 +35,7 @@ class LoginView(ObtainAuthToken):
     serializer_class = LoginSerializer
     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
 
+
 class ChangePasswordView(APIView):
     """change user password"""
     permission_classes = (IsAuthenticated,)
@@ -43,5 +48,15 @@ class ChangePasswordView(APIView):
             user.set_password(serializer.data.get("password"))
             user.save()
             return Response({'success': True}, status=status.HTTP_200_OK)
-
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
+    """This viewset provides user `list` and `detail` actions."""
+    queryset = get_user_model().objects.all()
+    
+    def get_serializer_class(self):
+        """ An authenticated user gets more data """
+        if self.request.user.is_authenticated:
+            return AuthUserSerializer
+        return PublicUserSerializer
